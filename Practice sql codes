@@ -16,3 +16,16 @@ delete from (
 select * from test_rownumber where rowid not in (
 select min(rowid) from test_rownumber group by process_label
 )and process_label = 'abc');
+
+3) Method
+--Through sql server Note: this will not work in oracle because oracle did not support directly deleting from CTE 
+delete from (
+with a as (
+    select 
+        process_label,
+        row_number() over (partition by process_label order by null) as rn
+    from 
+        test_rownumber
+    where process_label = 'abc'
+)
+select * from a where rn <> 1);

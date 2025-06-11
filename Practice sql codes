@@ -1,0 +1,18 @@
+--Ways of duplicate data deletion
+1) Method
+Delete from  test_rownumber where rowid IN (
+select rowid from (
+select 
+    process_label,
+    row_number() over (partition by process_label , process_label order by rowid) as rn
+from 
+    test_rownumber where process_label = 'xyz'
+) where rn <> 1
+);
+
+2) Method
+--delete from (
+delete from (
+select * from test_rownumber where rowid not in (
+select min(rowid) from test_rownumber group by process_label
+)and process_label = 'abc');

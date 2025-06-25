@@ -1,0 +1,34 @@
+/*
+    Load data from datafile using oracle loader.
+*/
+--Step 1 - Create directory where datafiles are stored
+--linux directory where files are stored
+CREATE OR REPLACE DIRECTORY external_table_test AS  '/aipfs/test_shell_script/scripts/';
+
+--if windows oracle - directory where files are stored
+CREATE OR REPLACE DIRECTORY external_table_test AS  'C:\oracle\data';
+
+--Step 2 - Give permission to the user to access datafile and directory
+Grant read,write,execute to usernam;
+
+--Step 3 - Create external table
+CREATE TABLE test_datafile (
+    test_nbr VARCHAR2(100),
+    test_id  VARCHAR2(100),
+    file_id  VARCHAR2(100)
+)ORGANIZATION EXTERNAL (
+    TYPE ORACLE_LOADER
+    DEFAULT DIRECTORY external_table_test
+    ACCESS PARAMETERS (
+        RECORDS DELIMITED BY NEWLINE
+        FIELDS TERMINATED BY ','
+        OPTIONALLY ENCLOSED BY '"'
+        MISSING FIELD VALUES ARE NULL
+        (
+            test_nbr,
+            test_id,
+            file_id
+        )
+    )LOCATION ('test_datafile.txt')
+)REJECT LIMIT UNLIMITED;
+/

@@ -1,0 +1,105 @@
+/*
+    Use always test schema for testing.
+*/
+CREATE OR REPLACE PACKAGE ut_cdip_custom_intake_suite IS
+  --Test suite like a class where all the tests method written
+  -- %suite(Custom Intake Dates Test Suite)
+  
+  --This is the path of this package or module suite this will help to call individual test module while running tests
+  -- %suitepath(UTILITY.ut_cdip_custom_intake_suite) 
+    
+  --This procedure will call first before calling any tests methods at once
+  -- %beforeall
+  PROCEDURE setup_suite;
+  
+  --This procedure will call be called at the end of all the tests methods at once
+  -- %afterall
+  PROCEDURE teardown_suite;
+  
+  --This will be called before each of the test methods at once
+  -- %beforeeach
+--  PROCEDURE init;
+    
+  ----This will be called after each of the test methods at once
+  -- %aftereach
+--  PROCEDURE finalize;
+
+  -- %test(Test core function of: Custom Intake Dates)
+  PROCEDURE test_custom_intake_dates;
+  
+  
+  --Define types
+  TYPE t_name_tab IS TABLE OF VARCHAR2(4000);
+    
+END;
+/
+
+CREATE OR REPLACE PACKAGE BODY ut_cdip_custom_intake_suite IS 
+    
+    --Global Variables
+     g_schema_name VARCHAR2(100);
+     g_table_name  VARCHAR2(100);
+    
+    PROCEDURE setup_suite IS 
+    BEGIN
+        g_schema_name := 'CCL_2024_TST_M_5';
+        g_table_name  := 'custom_intake_dates';
+    END;
+    
+    --Drop records after testing    
+    PROCEDURE teardown_suite IS
+    BEGIN
+        EXECUTE IMMEDIATE 'DELETE FROM '||g_schema_name||'.'||g_table_name||'';
+        EXECUTE IMMEDIATE 'DELETE FROM aipdb.cdip_custom_intake_dates_log WHERE run_id = '''||g_schema_name||'''';
+        COMMIT;
+       null;
+    END;
+--    
+--    PROCEDURE init;
+--    
+--    PROCEDURE finalize;
+    
+    PROCEDURE test_custom_intake_dates IS
+        l_query clob;
+        l_expected clob;
+        l_actual clob;
+    BEGIN
+        --Fetch config table data
+        SELECT
+            LISTAGG(meas_abbr, ',')
+        INTO l_expected
+        FROM
+            aipdb.cdip_custom_intake_dates_config
+        WHERE
+            run_id = g_schema_name;
+      
+        --Call the procedure
+        sp_cdip_custom_intake_dates(g_schema_name,'run');
+        
+        --Fetch trasfered data
+        l_query := '
+                    SELECT
+                        listagg(meas_abbr,'','')
+                    FROM
+                        '
+                   || g_schema_name
+                   || '.'
+                   || g_table_name
+                   || '';
+
+        EXECUTE IMMEDIATE l_query
+        INTO l_actual;
+        
+        ut.expect(l_actual).to_equal(l_expected);
+    END;
+
+END;
+/
+
+set serveroutput on;
+exec ut_cdip_custom_intake_suite.test_custom_intake_dates;
+SET SERVEROUTPUT ON SIZE 1000000;
+begin
+    ut.run('UTILITY.ut_cdip_custom_intake_suite');
+end;
+/

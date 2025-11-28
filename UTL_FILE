@@ -1,0 +1,18 @@
+/*
+    NOTE:
+    directory path must be an database server location.
+    Below /data1/aipfs is database server location and is mounted on /aipfs
+*/
+create or replace directory oracle_utl_test AS '/data1/aipfs/test_shell_script/oracle_utl';
+
+/
+--Simple way to test utl_file 
+DECLARE
+    l_file  UTL_FILE.FILE_TYPE;
+BEGIN
+    l_file := UTL_FILE.FOPEN('ORACLE_UTL_TEST','utl_file_test_output.txt','W');
+    UTL_FILE.PUT_LINE(l_file,'UTL TEST DEMO File');
+    UTL_FILE.PUT_LINE(l_file,'This is first code practice of utl_file in oracle sql');
+    UTL_FILE.FCLOSE(l_file);
+END;
+/

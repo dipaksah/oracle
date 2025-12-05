@@ -72,3 +72,28 @@ FROM (
     FROM test_duplicate td
 ) t  
 WHERE rn > 1;
+
+--find 50% of records - oracle
+SELECT
+    *
+FROM
+    test_duplicate
+WHERE
+    ROWNUM <= (
+        SELECT
+            COUNT(*) / 2
+        FROM
+            test_duplicate
+    );
+
+--find 50% of records - postgresssql
+SELECT
+    *
+FROM
+    test_duplicate
+    limit (
+        SELECT
+            COUNT(ctid) / 2
+        FROM
+            test_duplicate
+    );

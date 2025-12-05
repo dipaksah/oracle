@@ -61,3 +61,14 @@ GROUP BY
     salary
 HAVING
     COUNT(*) > 1;
+
+--postGresSQL 
+--find duplicate rows below query work in postgressql only
+SELECT *
+FROM (
+    SELECT
+        td.*,
+        RANK() OVER (PARTITION BY row(td.*) ORDER BY ctid) rn
+    FROM test_duplicate td
+) t  
+WHERE rn > 1;

@@ -97,3 +97,34 @@ FROM
         FROM
             test_duplicate
     );
+
+--find second highest salary with full details of employe
+SELECT
+    MAX(salary)
+FROM
+    test_duplicate
+WHERE
+    salary < (
+        SELECT
+            MAX(salary)
+        FROM
+            test_duplicate
+    );
+
+--find first,second,third,fourth......n highest salary with full details of employe
+SELECT
+    *
+FROM
+    (
+        SELECT
+            td.*,
+            ROW_NUMBER()
+            OVER(
+                ORDER BY
+                    salary DESC
+            ) rn
+        FROM
+            test_duplicate td
+    ) t
+WHERE
+    rn = 2;

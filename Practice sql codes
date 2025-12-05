@@ -1,3 +1,20 @@
+--example code
+create table test_duplicate(
+    name varchar(100),
+    address varchar(100),
+    salary integer
+);
+
+insert into test_duplicate(name,address,salary)values('abc','pokhara',10000);
+insert into test_duplicate(name,address,salary)values('abc','pokhara',10000);
+insert into test_duplicate(name,address,salary)values('abc','pokhara',10000);
+insert into test_duplicate(name,address,salary)values('xyz','kathmandu',20000);
+insert into test_duplicate(name,address,salary)values('xyz','kathmandu',20000);
+insert into test_duplicate(name,address,salary)values('xyz','kathmandu',20000);
+insert into test_duplicate(name,address,salary)values('aaa','simara',40000);
+insert into test_duplicate(name,address,salary)values('bbb','janakpur',50000);
+/
+
 --Ways of duplicate data deletion
 1) Method
 Delete from  test_rownumber where rowid IN (

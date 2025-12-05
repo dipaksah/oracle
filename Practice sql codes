@@ -29,3 +29,18 @@ with a as (
     where process_label = 'abc'
 )
 select * from a where rn <> 1);
+
+--Find duplciate rows
+SELECT
+    name,
+    address,
+    salary,
+    COUNT(*) AS dup
+FROM
+    test_duplicate
+GROUP BY
+    name,
+    address,
+    salary
+HAVING
+    COUNT(*) > 1;

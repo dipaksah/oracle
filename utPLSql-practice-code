@@ -103,3 +103,44 @@ begin
     ut.run('UTILITY.ut_cdip_custom_intake_suite');
 end;
 /
+
+
+
+--generate test report
+declare
+    l_file UTL_FILE.FILE_TYPE;
+    l_output CLOB;
+    l_line   VARCHAR2(32767);
+begin
+    l_file := UTL_FILE.FOPEN('ORACLE_UTL_TEST','ut_test_report.txt','A',32767);
+    
+    FOR rec IN (select column_value from table(
+      ut.run(
+         a_path     => 'UTILITY.ut_cdip_custom_intake_suite',
+         a_reporter => ut_documentation_reporter()
+      )
+        )
+    ) LOOP
+            UTL_FILE.PUT_LINE(l_file, rec.column_value);
+        END LOOP;
+
+    -- Close the file
+    UTL_FILE.FCLOSE(l_file);
+end;
+/
+
+--document view
+select * from table(
+  ut.run(
+     a_path     => 'UTILITY.ut_cdip_custom_intake_suite',
+     a_reporter => ut_documentation_reporter()
+  )
+);
+/
+--html view
+select * from table(
+  ut.run(
+     a_path     => 'UTILITY.ut_cdip_custom_intake_suite',
+     a_reporter => ut_coverage_html_reporter()
+  )
+);

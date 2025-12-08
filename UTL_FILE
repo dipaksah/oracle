@@ -16,3 +16,35 @@ BEGIN
     UTL_FILE.FCLOSE(l_file);
 END;
 /
+
+
+--To generate CSV file
+DECLARE
+    l_file UTL_FILE.FILE_TYPE;
+BEGIN
+    --Open file to writing
+    l_file := UTL_FILE.FOPEN('ORACLE_UTL_TEST','utl_excel_file_test_output.csv','W');
+    
+    --Write header row
+    UTL_FILE.PUT_LINE(l_file, 'name,address,salary');
+    
+    --write data
+    FOR i IN (
+        SELECT
+            name,
+            address,
+            salary
+        FROM
+            test_duplicate
+    ) LOOP
+        utl_file.put_line(l_file, i.name
+                                  || ','
+                                  || i.address
+                                  || ','
+                                  || i.salary);
+    END LOOP;
+    
+    --Close the file
+    UTL_FILE.FCLOSE(l_file);
+END;
+/

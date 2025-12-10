@@ -1,3 +1,8 @@
+Installation process: download and save the utplsql repo in any location of windows.
+call -> @C:\utPLSQL\utPLSQL\source\install.sql;
+call -> @C:\utPLSQL\utPLSQL\source\uninstall.sql;
+
+
 /*
     Use always test schema for testing.
 */
